@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'digest'
+require 'openssl'
 require 'sidekiq_unique_jobs/normalizer'
 
 module SidekiqUniqueJobs
@@ -30,7 +30,7 @@ module SidekiqUniqueJobs
 
     def unique_digest
       @unique_digest ||= begin
-        digest = Digest::MD5.hexdigest(Sidekiq.dump_json(digestable_hash))
+        digest = OpenSSL::Digest::MD5.hexdigest(Sidekiq.dump_json(digestable_hash))
         digest = "#{unique_prefix}:#{digest}"
         logger.debug { "#{__method__} : #{digestable_hash} into #{digest}" }
         digest
